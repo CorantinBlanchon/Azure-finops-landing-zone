@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.40.2.10011",
+      "templateHash": "16502194779553516167"
+    }
+  },
+  "parameters": {
+    "budgetName": {
+      "type": "string",
+      "defaultValue": "finops-monthly-budget",
+      "metadata": {
+        "description": "Name of the Azure budget"
+      }
+    },
+    "amount": {
+      "type": "int",
+      "defaultValue": 100,
+      "metadata": {
+        "description": "Monthly budget amount in EUR"
+      }
+    },
+    "startDate": {
+      "type": "string",
+      "defaultValue": "2026-01-01",
+      "metadata": {
+        "description": "Budget start date (YYYY-MM-DD)"
+      }
+    },
+    "endDate": {
+      "type": "string",
+      "defaultValue": "2026-12-31",
+      "metadata": {
+        "description": "Budget end date (YYYY-MM-DD)"
+      }
+    },
+    "contactEmails": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "description": "Optional notification emails"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Consumption/budgets",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('budgetName')]",
+      "properties": {
+        "category": "Cost",
+        "amount": "[parameters('amount')]",
+        "timeGrain": "Monthly",
+        "timePeriod": {
+          "startDate": "[parameters('startDate')]",
+          "endDate": "[parameters('endDate')]"
+        },
+        "notifications": {
+          "actual_50": {
+            "enabled": true,
+            "operator": "GreaterThan",
+            "threshold": 50,
+            "contactRoles": [
+              "Owner"
+            ],
+            "contactEmails": "[parameters('contactEmails')]"
+          },
+          "actual_80": {
+            "enabled": true,
+            "operator": "GreaterThan",
+            "threshold": 80,
+            "contactRoles": [
+              "Owner"
+            ],
+            "contactEmails": "[parameters('contactEmails')]"
+          }
+        }
+      }
+    }
+  ]
+}
